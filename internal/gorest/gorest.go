@@ -12,7 +12,6 @@ type App struct {
 	requestsList  *components.RequestsListComponent
 	request       *components.RequestComponent
 	response      *components.ResponseComponent
-	mode          int
 }
 
 // Create gorest application and initialize components
