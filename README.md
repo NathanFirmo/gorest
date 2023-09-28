@@ -1,2 +1,2 @@
-# gorest
-🗿Terminal rest client like Postman and Insomnia 
+# Terminal rest client like Postman and Insomnia 
+
