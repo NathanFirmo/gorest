@@ -28,7 +28,6 @@ func CreateApp() *App {
 		requestsList:  reqList,
 	}
 
-	// Configure root layout
 	a.rootContainer.AddItem(a.requestsList.Container, 0, 1, true).
 		AddItem(a.request.Container, 0, 2, false).
 		AddItem(a.response.Container, 0, 2, false)
