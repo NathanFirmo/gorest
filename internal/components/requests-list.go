@@ -13,23 +13,29 @@ type Request struct {
 }
 
 type RequestsListComponent struct {
-	Items     []Request
+	Container *tview.Flex
 	Component *tview.List
+	Items     []Request
 }
 
 // AddItem a new request into requests list
 func (rl *RequestsListComponent) AddItem(r *Request, cb func()) {
-  rl.Component.AddItem(r.Name, r.Url, 0, cb)
-
+	rl.Component.AddItem(r.Name, r.Url, 0, cb)
 	rl.Items = append(rl.Items, *r)
 }
 
-// Create a component to show requests list
+// Create a flex container with row alignment to put requests list
 func CreateRequestsList() *RequestsListComponent {
-	c := tview.NewList()
+	cp := tview.NewList()
+
+	ct := tview.NewFlex()
+	ct.SetDirection(tview.FlexRow).SetBorder(true).SetTitle("List")
+
+	ct.AddItem(cp, 0, 1, false)
 
 	return &RequestsListComponent{
-		Component: c,
+		Container: ct,
+		Component: cp,
 		Items:     make([]Request, 0),
 	}
 }

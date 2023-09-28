@@ -1,7 +1,7 @@
 package gorest
 
 import (
-	uicontainers "github.com/NathanFirmo/gorest/internal/ui-containers"
+	"github.com/NathanFirmo/gorest/internal/components"
 	"github.com/rivo/tview"
 )
 
@@ -9,24 +9,24 @@ import (
 type App struct {
 	tview         *tview.Application
 	rootContainer *tview.Flex
-	requestsList  *uicontainers.RequestsListContainer
-	request       *uicontainers.RequestContainer
-	response      *uicontainers.ResponseContainer
+	requestsList  *components.RequestsListComponent
+	request       *components.RequestComponent
+	response      *components.ResponseComponent
 	mode          int
 }
 
 // Create gorest application and initialize components
 func CreateApp() *App {
-	requestContainer := uicontainers.CreateRequest()
-	responseContainer := uicontainers.CreateResponse()
-	requestsListContainer := uicontainers.CreateRequestsList()
+	req := components.CreateRequest()
+	res := components.CreateResponse()
+	reqList := components.CreateRequestsList()
 
 	a := App{
 		tview:         tview.NewApplication(),
 		rootContainer: tview.NewFlex(),
-		request:       requestContainer,
-		response:      responseContainer,
-		requestsList:  requestsListContainer,
+		request:       req,
+		response:      res,
+		requestsList:  reqList,
 	}
 
 	// Configure root layout
@@ -35,7 +35,7 @@ func CreateApp() *App {
 		AddItem(a.response.Container, 0, 2, false)
 	a.tview.SetRoot(a.rootContainer, true).SetFocus(a.rootContainer).EnableMouse(true)
 
-	a.tview.SetFocus(a.requestsList.Component.Component)
+	a.tview.SetFocus(a.requestsList.Component)
 	a.SetInputHandlers()
 
 	return &a
