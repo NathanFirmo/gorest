@@ -14,30 +14,42 @@ func (a *App) SetInputHandlers() {
 		switch event.Key() {
 		case tcell.KeyCtrlL:
 			if focus == a.requestsList.Component || focus == a.requestsList.Container {
-				a.tview.SetFocus(a.request.UrlInputComponent)
-			} else if focus == a.request.UrlInputComponent || focus == a.request.OptionsComponent {
+				a.tview.SetFocus(a.request.NameComponent)
+			} else {
 				a.tview.SetFocus(a.response.Container)
 			}
 			return event
 		case tcell.KeyCtrlH:
 			if focus == a.response.Container {
-				a.tview.SetFocus(a.request.UrlInputComponent)
-			} else if focus == a.request.UrlInputComponent || focus == a.request.OptionsComponent {
+				a.tview.SetFocus(a.request.NameComponent)
+			} else {
 				a.tview.SetFocus(a.requestsList.Component)
 			}
 			return event
 		case tcell.KeyCtrlJ:
-			if focus == a.request.UrlInputComponent {
-				a.tview.SetFocus(a.request.OptionsComponent)
+			if focus == a.request.NameComponent {
+				a.tview.SetFocus(a.request.UrlComponent)
+			}
+			if focus == a.request.UrlComponent {
+				a.tview.SetFocus(a.request.HeadersComponent)
+			}
+			if focus == a.request.HeadersComponent {
+				a.tview.SetFocus(a.request.BodyComponent)
 			}
 			return event
 		case tcell.KeyCtrlK:
-			if focus == a.request.OptionsComponent {
-				a.tview.SetFocus(a.request.UrlInputComponent)
+			if focus == a.request.BodyComponent {
+				a.tview.SetFocus(a.request.HeadersComponent)
+			}
+			if focus == a.request.HeadersComponent {
+				a.tview.SetFocus(a.request.UrlComponent)
+			}
+			if focus == a.request.UrlComponent {
+				a.tview.SetFocus(a.request.NameComponent)
 			}
 			return event
 		case tcell.KeyEnter:
-			url := a.request.UrlInputComponent.GetText()
+			url := a.request.UrlComponent.GetText()
 			res, _ := utils.MakeRequest(url)
 			a.response.Component.SetText(string(res))
 		case tcell.KeyCtrlN:
@@ -49,9 +61,10 @@ func (a *App) SetInputHandlers() {
 				Headers: "",
 				Body:    "",
 			}, func() {
-				_, url := a.requestsList.Component.GetItemText(length)
-				a.request.UrlInputComponent.SetText(url)
-				a.tview.SetFocus(a.request.UrlInputComponent)
+				name, url := a.requestsList.Component.GetItemText(length)
+				a.request.UrlComponent.SetText(url)
+				a.request.NameComponent.SetText(name)
+				a.tview.SetFocus(a.request.NameComponent)
 			})
 			a.requestsList.Component.SetCurrentItem(length)
 		}
@@ -59,7 +72,13 @@ func (a *App) SetInputHandlers() {
 		return event
 	})
 
-	a.request.UrlInputComponent.SetChangedFunc(func(url string) {
+	a.request.NameComponent.SetChangedFunc(func(name string) {
+		index := a.requestsList.Component.GetCurrentItem()
+		_, url := a.requestsList.Component.GetItemText(index)
+		a.requestsList.Component.SetItemText(index, name, url)
+	})
+
+	a.request.UrlComponent.SetChangedFunc(func(url string) {
 		index := a.requestsList.Component.GetCurrentItem()
 		main, _ := a.requestsList.Component.GetItemText(index)
 		a.requestsList.Component.SetItemText(index, main, url)
