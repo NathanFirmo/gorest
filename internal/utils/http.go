@@ -2,14 +2,25 @@ package utils
 
 import (
 	"encoding/json"
+	// "fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
-func MakeRequest(url string) ([]byte, error) {
-	client := &http.Client{}
+func MakeRequest(method string, url string, rawHeaders string, rawBody string) ([]byte, error) {
+	req, _ := http.NewRequest(method, url, strings.NewReader(rawBody))
+	headers := strings.Split(strings.TrimSpace(rawHeaders), "\n")
 
-	res, err := client.Get(url)
+	for _, h := range headers {
+		parsedHeader := strings.Split(h, ":")
+		if len(parsedHeader) == 1 {
+			continue
+		}
+		req.Header.Add(parsedHeader[0], parsedHeader[1])
+	}
+
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

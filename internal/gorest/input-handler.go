@@ -1,6 +1,8 @@
 package gorest
 
 import (
+	"strings"
+
 	"github.com/NathanFirmo/gorest/internal/components"
 	"github.com/NathanFirmo/gorest/internal/utils"
 	"github.com/gdamore/tcell/v2"
@@ -48,9 +50,13 @@ func (a *App) SetInputHandlers() {
 				a.tview.SetFocus(a.request.NameComponent)
 			}
 			return event
-		case tcell.KeyEnter:
-			url := a.request.UrlComponent.GetText()
-			res, _ := utils.MakeRequest(url)
+		case tcell.KeyCtrlSpace:
+			split := strings.Split(a.request.UrlComponent.GetText(), " ")
+			if len(split) == 1 {
+				return event
+			}
+
+			res, _ := utils.MakeRequest(strings.TrimSpace(split[0]), strings.TrimSpace(split[1]), a.request.HeadersComponent.GetText(), a.request.BodyComponent.GetText())
 			a.response.Component.SetText(string(res))
 		case tcell.KeyCtrlN:
 			length := a.requestsList.Component.GetItemCount()
