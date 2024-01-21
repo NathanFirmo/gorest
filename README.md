@@ -1,3 +1,3 @@
-# Terminal rest client like Postman and Insomnia 
+# Gorest
 
-
+Enjoy making http requests on your terminal like you do on Insomnia.

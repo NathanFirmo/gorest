@@ -22,3 +22,7 @@ go.work
 
 # SQLite DBs
 *.db
+
+dist/
+
+github_token

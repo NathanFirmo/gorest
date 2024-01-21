@@ -1,0 +1,164 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+
+project_name: gorest
+
+builds:
+  # You can have multiple builds defined as a yaml list
+  - #
+    # ID of the build.
+    #
+    # Default: Binary name
+    id: "linux"
+
+    # Path to main.go file or main package.
+    # Notice: when used with `gomod.proxy`, this must be a package.
+    #
+    # Default is `.`.
+    main: ./cmd/gorest
+
+    # Binary name.
+    # Can be a path (e.g. `bin/app`) to wrap the binary in a directory.
+    #
+    # Default: Project directory name
+    binary: gorest
+
+    # Custom flags.
+    #
+    # Templates: allowed
+    flags:
+      - -v
+
+    # Custom ldflags.
+    #
+    # Default: '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser'
+    # Templates: allowed
+    ldflags:
+      - -s -w -X main.build={{.Version}}
+
+    # Custom Go build mode.
+    #
+    # Valid options:
+    # - `c-shared`
+    # - `c-archive`
+    #
+    # Since: v1.13
+    buildmode: c-shared
+
+    # Custom environment variables to be set during the builds.
+    # Invalid environment variables will be ignored.
+    #
+    # Default: os.Environ() ++ env config section
+    # Templates: allowed (since v1.14)
+    env:
+      - CGO_ENABLED=0
+
+    # GOOS list to build for.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    #
+    # Default: [ 'darwin', 'linux', 'windows' ]
+    goos:
+      - linux
+      # - darwin
+      # - windows
+
+    # GOARCH to build for.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    #
+    # Default: [ '386', 'amd64', 'arm64' ]
+    goarch:
+      - amd64
+      # - arm64
+
+    # Set the modified timestamp on the output binary, typically
+    # you would do this to ensure a build was reproducible. Pass
+    # empty string to skip modifying the output.
+    #
+    # Templates: allowed.
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+release:
+  # Repo in which the release will be created.
+  # Default is extracted from the origin remote URL or empty if its private hosted.
+  github:
+    owner: NathanFirmo
+    name: gorest
+
+  # IDs of the archives to use.
+  # Empty means all IDs.
+  #
+  # Default: []
+  ids:
+    - foo
+    - bar
+
+  # If set to true, will not auto-publish the release.
+  # Available only for GitHub and Gitea.
+  draft: true
+
+  # Whether to remove existing draft releases with the same name before creating
+  # a new one.
+  # Only effective if `draft` is set to true.
+  # Available only for GitHub.
+  #
+  # Since: v1.11
+  replace_existing_draft: true
+
+  # Useful if you want to delay the creation of the tag in the remote.
+  # You can create the tag locally, but not push it, and run GoReleaser.
+  # It'll then set the `target_commitish` portion of the GitHub release to the
+  # value of this field.
+  # Only works on GitHub.
+  #
+  # Default: ''
+  # Since: v1.11
+  # Templates: allowed
+  target_commitish: "{{ .Commit }}"
+
+  # If set, will create a release discussion in the category specified.
+  #
+  # Warning: do not use categories in the 'Announcement' format.
+  #  Check https://github.com/goreleaser/goreleaser/issues/2304 for more info.
+  #
+  # Default is empty.
+  discussion_category_name: General
+
+  # If set to auto, will mark the release as not ready for production
+  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
+  # If set to true, will mark the release as not ready for production.
+  # Default is false.
+  prerelease: auto
+
+  # If set to false, will NOT mark the release as "latest".
+  # This prevents it from being shown at the top of the release list,
+  # and from being returned when calling https://api.github.com/repos/OWNER/REPO/releases/latest.
+  #
+  # Available only for GitHub.
+  #
+  # Default is true.
+  # Since: v1.20
+  make_latest: true
+
+  # What to do with the release notes in case there the release already exists.
+  #
+  # Valid options are:
+  # - `keep-existing`: keep the existing notes
+  # - `append`: append the current release notes to the existing notes
+  # - `prepend`: prepend the current release notes to the existing notes
+  # - `replace`: replace existing notes
+  #
+  # Default is `keep-existing`.
+  mode: append
+
+  # Header for the release body.
+  #
+  # Templates: allowed
+  header: |
+    ## Release {{ .CurrentTag }}
+
+    Welcome to this new release!
+
+  # You can change the name of the release.
+  #
+  # Default: '{{.Tag}}' ('{{.PrefixedTag}}' on Pro)
+  # Templates: allowed
+  name_template: "{{.Tag}}"
