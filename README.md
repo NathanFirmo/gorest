@@ -5,7 +5,7 @@
 ![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-Enjoy making http requests on your terminal like you do on Insomnia.
+Enjoy making HTTP requests in your terminal, just like you do in Insomnia.
 
 <img src="https://github.com/NathanFirmo/gorest/assets/79997705/1cd5f526-9e34-4493-810b-f0f40b369986" width="550px" heigth="550px">
 
