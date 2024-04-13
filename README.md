@@ -29,3 +29,10 @@ Binaries available on the [releases page](https://github.com/NathanFirmo/gorest/
 |`CTRL-L`|Go to section on the **right**|
 |`CTRL-N`|Creates a **new request** on the list|
 |`CTRL-Space`|**Execute** current request|
+
+## Roadmap
+ 
+- [ ] Save requests locally with SQLite;
+- [ ] Allow pasting curl requests like Insomnia does;
+- [ ] Add themes;
+- [ ] Add gorest to some package managers like flatpak, snap, aur, winget, etc.
