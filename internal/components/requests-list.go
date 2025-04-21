@@ -5,6 +5,7 @@ import (
 )
 
 type Request struct {
+	ID      int64
 	Url     string
 	Name    string
 	Method  string

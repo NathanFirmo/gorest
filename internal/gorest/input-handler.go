@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/NathanFirmo/gorest/internal/components"
+	"github.com/NathanFirmo/gorest/internal/db"
 	"github.com/NathanFirmo/gorest/internal/utils"
 	"github.com/gdamore/tcell/v2"
 )
@@ -60,19 +61,33 @@ func (a *App) SetInputHandlers() {
 			a.response.Component.SetText(string(res))
 		case tcell.KeyCtrlN:
 			length := a.requestsList.Component.GetItemCount()
-			a.requestsList.AddItem(&components.Request{
+			req := &components.Request{
+				ID:      int64(length),
 				Url:     "",
 				Name:    "New request",
 				Method:  "GET",
 				Headers: "",
 				Body:    "",
-			}, func() {
-				name, url := a.requestsList.Component.GetItemText(length)
-				a.request.UrlComponent.SetText(url)
-				a.request.NameComponent.SetText(name)
+			}
+			a.requestsList.AddItem(req, func() {
+				a.request.UrlComponent.SetText(req.Url)
+				a.request.NameComponent.SetText(req.Name)
 				a.tview.SetFocus(a.request.NameComponent)
 			})
 			a.requestsList.Component.SetCurrentItem(length)
+
+			dbReq := &db.Request{
+				ID:      int64(length),
+				URL:     req.Url,
+				Name:    req.Name,
+				Method:  req.Method,
+				Headers: req.Headers,
+				Body:    req.Body,
+			}
+
+			if _, err := db.SaveRequest(dbReq); err != nil {
+				panic(err)
+			}
 		}
 
 		return event
@@ -82,11 +97,36 @@ func (a *App) SetInputHandlers() {
 		index := a.requestsList.Component.GetCurrentItem()
 		_, url := a.requestsList.Component.GetItemText(index)
 		a.requestsList.Component.SetItemText(index, name, url)
+
+		req := &db.Request{
+			ID:      int64(index),
+			URL:     url,
+			Name:    name,
+			Method:  "GET", 
+			Headers: a.request.HeadersComponent.GetText(),
+			Body:    a.request.BodyComponent.GetText(),
+		}
+
+		if err := db.UpdateRequest(req); err != nil {
+			panic(err)
+		}
 	})
 
 	a.request.UrlComponent.SetChangedFunc(func(url string) {
 		index := a.requestsList.Component.GetCurrentItem()
-		main, _ := a.requestsList.Component.GetItemText(index)
-		a.requestsList.Component.SetItemText(index, main, url)
+		name, _ := a.requestsList.Component.GetItemText(index)
+		a.requestsList.Component.SetItemText(index, name, url)
+
+		req := &db.Request{
+			ID:      int64(index),
+			URL:     url,
+			Name:    name,
+			Method:  "GET", 
+			Headers: a.request.HeadersComponent.GetText(),
+			Body:    a.request.BodyComponent.GetText(),
+		}
+		if err := db.UpdateRequest(req); err != nil {
+			panic(err)
+		}
 	})
 }

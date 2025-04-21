@@ -2,6 +2,7 @@ package gorest
 
 import (
 	"github.com/NathanFirmo/gorest/internal/components"
+	"github.com/NathanFirmo/gorest/internal/db"
 	"github.com/rivo/tview"
 )
 
@@ -35,8 +36,34 @@ func CreateApp() *App {
 
 	a.tview.SetFocus(a.requestsList.Component)
 	a.SetInputHandlers()
+	a.loadSavedRequests()
 
 	return &a
+}
+
+// loadSavedRequests loads all saved requests from the database
+func (a *App) loadSavedRequests() {
+	requests, err := db.GetAllRequests()
+	if err != nil {
+		return
+	}
+
+	for i, req := range requests {
+		a.requestsList.AddItem(&components.Request{
+			ID:      int64(i),
+			Url:     req.URL,
+			Name:    req.Name,
+			Method:  req.Method,
+			Headers: req.Headers,
+			Body:    req.Body,
+		}, func() {
+			a.request.UrlComponent.SetText(req.URL)
+			a.request.NameComponent.SetText(req.Name)
+			a.request.HeadersComponent.SetText(req.Headers, true)
+			a.request.BodyComponent.SetText(req.Body, true)
+			a.tview.SetFocus(a.request.NameComponent)
+		})
+	}
 }
 
 // Start gorest application
