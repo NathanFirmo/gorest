@@ -29,14 +29,16 @@ func CreateApp() *App {
 		requestsList:  reqList,
 	}
 
+	a.ApplyDraculaTheme()
+
 	a.rootContainer.AddItem(a.requestsList.Container, 0, 1, true).
 		AddItem(a.request.Container, 0, 2, false).
 		AddItem(a.response.Container, 0, 2, false)
 	a.tview.SetRoot(a.rootContainer, true).SetFocus(a.rootContainer).EnableMouse(true)
 
-	a.tview.SetFocus(a.requestsList.Component)
 	a.SetInputHandlers()
 	a.loadSavedRequests()
+	a.tview.SetFocus(a.requestsList.Component)
 
 	return &a
 }
