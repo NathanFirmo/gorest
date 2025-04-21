@@ -51,11 +51,22 @@ func (a *App) SetInputHandlers() {
 				a.tview.SetFocus(a.request.NameComponent)
 			}
 			return event
+		case tcell.KeyEnter:
+			index := a.requestsList.Component.GetCurrentItem()
+			name, url := a.requestsList.Component.GetItemText(index)
+			a.request.UrlComponent.SetText(url)
+			a.request.NameComponent.SetText(name)
+			a.tview.SetFocus(a.request.NameComponent)
+
+			return event
 		case tcell.KeyCtrlSpace:
 			split := strings.Split(a.request.UrlComponent.GetText(), " ")
 			if len(split) == 1 {
+				a.response.Component.SetText("Missing HTTP method!")
 				return event
 			}
+
+			a.response.Component.SetText("Making request...")
 
 			res, _ := utils.MakeRequest(strings.TrimSpace(split[0]), strings.TrimSpace(split[1]), a.request.HeadersComponent.GetText(), a.request.BodyComponent.GetText())
 			a.response.Component.SetText(string(res))
@@ -63,14 +74,14 @@ func (a *App) SetInputHandlers() {
 			length := a.requestsList.Component.GetItemCount()
 			req := &components.Request{
 				ID:      int64(length),
-				Url:     "",
+				URL:     "",
 				Name:    "New request",
 				Method:  "GET",
 				Headers: "",
 				Body:    "",
 			}
 			a.requestsList.AddItem(req, func() {
-				a.request.UrlComponent.SetText(req.Url)
+				a.request.UrlComponent.SetText(req.URL)
 				a.request.NameComponent.SetText(req.Name)
 				a.tview.SetFocus(a.request.NameComponent)
 			})
@@ -78,7 +89,7 @@ func (a *App) SetInputHandlers() {
 
 			dbReq := &db.Request{
 				ID:      int64(length),
-				URL:     req.Url,
+				URL:     req.URL,
 				Name:    req.Name,
 				Method:  req.Method,
 				Headers: req.Headers,
@@ -97,17 +108,23 @@ func (a *App) SetInputHandlers() {
 		index := a.requestsList.Component.GetCurrentItem()
 		_, url := a.requestsList.Component.GetItemText(index)
 		a.requestsList.Component.SetItemText(index, name, url)
-
-		req := &db.Request{
+		a.requestsList.UpdateItem(&components.Request{
 			ID:      int64(index),
 			URL:     url,
 			Name:    name,
-			Method:  "GET", 
+			Method:  "GET",
 			Headers: a.request.HeadersComponent.GetText(),
 			Body:    a.request.BodyComponent.GetText(),
-		}
+		})
 
-		if err := db.UpdateRequest(req); err != nil {
+		if err := db.UpdateRequest(&db.Request{
+			ID:      int64(index),
+			URL:     url,
+			Name:    name,
+			Method:  "GET",
+			Headers: a.request.HeadersComponent.GetText(),
+			Body:    a.request.BodyComponent.GetText(),
+		}); err != nil {
 			panic(err)
 		}
 	})
@@ -116,16 +133,23 @@ func (a *App) SetInputHandlers() {
 		index := a.requestsList.Component.GetCurrentItem()
 		name, _ := a.requestsList.Component.GetItemText(index)
 		a.requestsList.Component.SetItemText(index, name, url)
-
-		req := &db.Request{
+		a.requestsList.UpdateItem(&components.Request{
 			ID:      int64(index),
 			URL:     url,
 			Name:    name,
-			Method:  "GET", 
+			Method:  "GET",
 			Headers: a.request.HeadersComponent.GetText(),
 			Body:    a.request.BodyComponent.GetText(),
-		}
-		if err := db.UpdateRequest(req); err != nil {
+		})
+
+		if err := db.UpdateRequest(&db.Request{
+			ID:      int64(index),
+			URL:     url,
+			Name:    name,
+			Method:  "GET",
+			Headers: a.request.HeadersComponent.GetText(),
+			Body:    a.request.BodyComponent.GetText(),
+		}); err != nil {
 			panic(err)
 		}
 	})

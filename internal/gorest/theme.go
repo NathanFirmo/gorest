@@ -64,7 +64,7 @@ func (a *App) ApplyDraculaTheme() {
 	// Style input fields
 	a.request.NameComponent.SetBackgroundColor(colorBackground)
 	a.request.NameComponent.SetFieldBackgroundColor(colorBackground)
-	a.request.NameComponent.SetFieldTextColor(colorYellow)
+	a.request.NameComponent.SetFieldTextColor(colorGreen)
 	a.request.NameComponent.SetBorderColor(colorPurple)
 	a.request.NameComponent.SetTitleColor(colorCyan)
 	a.request.NameComponent.SetLabelColor(colorForeground)

@@ -34,7 +34,7 @@ func CreateApp() *App {
 	a.rootContainer.AddItem(a.requestsList.Container, 0, 1, true).
 		AddItem(a.request.Container, 0, 2, false).
 		AddItem(a.response.Container, 0, 2, false)
-	a.tview.SetRoot(a.rootContainer, true).SetFocus(a.rootContainer).EnableMouse(true)
+	a.tview.SetRoot(a.rootContainer, true).SetFocus(a.rootContainer)
 
 	a.SetInputHandlers()
 	a.loadSavedRequests()
@@ -43,7 +43,7 @@ func CreateApp() *App {
 	return &a
 }
 
-// loadSavedRequests loads all saved requests from the database
+// loads all saved requests from the database
 func (a *App) loadSavedRequests() {
 	requests, err := db.GetAllRequests()
 	if err != nil {
@@ -53,7 +53,7 @@ func (a *App) loadSavedRequests() {
 	for i, req := range requests {
 		a.requestsList.AddItem(&components.Request{
 			ID:      int64(i),
-			Url:     req.URL,
+			URL:     req.URL,
 			Name:    req.Name,
 			Method:  req.Method,
 			Headers: req.Headers,

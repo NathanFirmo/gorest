@@ -6,7 +6,7 @@ import (
 
 type Request struct {
 	ID      int64
-	Url     string
+	URL     string
 	Name    string
 	Method  string
 	Headers string
@@ -21,7 +21,7 @@ type RequestsListComponent struct {
 
 // AddItem a new request into requests list
 func (rl *RequestsListComponent) AddItem(r *Request, cb func()) {
-	rl.Component.AddItem(r.Name, r.Url, 0, cb)
+	rl.Component.AddItem(r.Name, r.URL, 0, cb)
 	rl.Items = append(rl.Items, *r)
 }
 
@@ -38,5 +38,14 @@ func CreateRequestsList() *RequestsListComponent {
 		Container: ct,
 		Component: cp,
 		Items:     make([]Request, 0),
+	}
+}
+
+func (rl *RequestsListComponent) UpdateItem(r *Request) {
+	if r.ID >= 0 && r.ID < int64(len(rl.Items)) {
+		rl.Items[r.ID].Name = r.Name
+		rl.Items[r.ID].URL = r.URL
+		rl.Items[r.ID].Headers = r.Headers
+		rl.Items[r.ID].Body = r.Body
 	}
 }
