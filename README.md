@@ -32,7 +32,7 @@ Binaries available on the [releases page](https://github.com/NathanFirmo/gorest/
 
 ## Roadmap
  
-- [ ] Save requests locally with SQLite;
+- [x] ~Save requests locally with SQLite~;
 - [ ] Allow pasting curl requests like Insomnia does;
 - [ ] Add themes;
 - [ ] Add gorest to some package managers like flatpak, snap, aur, winget, etc.
