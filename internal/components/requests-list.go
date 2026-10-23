@@ -17,12 +17,7 @@ type RequestsListComponent struct {
 	Container *tview.Flex
 	Component *tview.List
 	Items     []Request
-}
-
-// AddItem a new request into requests list
-func (rl *RequestsListComponent) AddItem(r *Request, cb func()) {
-	rl.Component.AddItem(r.Name, r.URL, 0, cb)
-	rl.Items = append(rl.Items, *r)
+	Format    func(Request) (main, secondary string)
 }
 
 // Create a flex container with row alignment to put requests list
@@ -38,14 +33,47 @@ func CreateRequestsList() *RequestsListComponent {
 		Container: ct,
 		Component: cp,
 		Items:     make([]Request, 0),
+		Format: func(r Request) (string, string) {
+			return tview.Escape(r.Name), tview.Escape(r.URL)
+		},
 	}
 }
 
-func (rl *RequestsListComponent) UpdateItem(r *Request) {
-	if r.ID >= 0 && r.ID < int64(len(rl.Items)) {
-		rl.Items[r.ID].Name = r.Name
-		rl.Items[r.ID].URL = r.URL
-		rl.Items[r.ID].Headers = r.Headers
-		rl.Items[r.ID].Body = r.Body
+func (rl *RequestsListComponent) AddItem(r Request) {
+	rl.Items = append(rl.Items, r)
+	main, secondary := rl.Format(r)
+	rl.Component.AddItem(main, secondary, 0, nil)
+}
+
+func (rl *RequestsListComponent) UpdateItem(index int, r Request) {
+	if index < 0 || index >= len(rl.Items) {
+		return
+	}
+	rl.Items[index] = r
+	main, secondary := rl.Format(r)
+	rl.Component.SetItemText(index, main, secondary)
+}
+
+func (rl *RequestsListComponent) RemoveItem(index int) {
+	if index < 0 || index >= len(rl.Items) {
+		return
+	}
+	rl.Items = append(rl.Items[:index], rl.Items[index+1:]...)
+	rl.Component.RemoveItem(index)
+}
+
+func (rl *RequestsListComponent) Current() (int, Request, bool) {
+	index := rl.Component.GetCurrentItem()
+	if index < 0 || index >= len(rl.Items) {
+		return index, Request{}, false
+	}
+	return index, rl.Items[index], true
+}
+
+// Refresh re-renders every item, e.g. after the theme changes.
+func (rl *RequestsListComponent) Refresh() {
+	for i, r := range rl.Items {
+		main, secondary := rl.Format(r)
+		rl.Component.SetItemText(i, main, secondary)
 	}
 }

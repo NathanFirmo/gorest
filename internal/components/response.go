@@ -12,7 +12,7 @@ type ResponseComponent struct {
 // Create a flex container with row alignment to put response data
 func CreateResponse() *ResponseComponent {
 	cp := tview.NewTextView()
-  cp.SetText("")
+	cp.SetText("")
 
 	ct := tview.NewFlex()
 	ct.SetDirection(tview.FlexRow).SetBorder(true).SetTitle("Response")
@@ -23,4 +23,10 @@ func CreateResponse() *ResponseComponent {
 		Container: ct,
 		Component: cp,
 	}
+}
+
+func (r *ResponseComponent) Show(title, content string) {
+	r.Container.SetTitle(title)
+	r.Component.SetText(content)
+	r.Component.ScrollToBeginning()
 }
